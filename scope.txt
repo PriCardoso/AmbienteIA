@@ -1,0 +1,1 @@
+fazer um progrma para listar a mensagem 'hello world' a partir de uma base de dados postgres em diferentes linguas
