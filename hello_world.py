@@ -9,7 +9,7 @@ phrase = "Olá Mundo"
 # Lista de idiomas para os quais queremos traduzir nossa frase.
 # Estes são os códigos de idioma para cada um dos idiomas.
 # Espanhol, Francês, Alemão, Russo e Chinês
-languages = ['es', 'fr', 'de', 'ru', 'zh-cn']
+languages = ['es', 'fr', 'de', 'ru', 'zh-cn', 'fi', 'pl', 'hu']
 
 # Traduzindo a frase para cada idioma
 for lang in languages:
