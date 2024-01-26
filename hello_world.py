@@ -1,4 +1,9 @@
 from googletrans import Translator
+from hello_world_data import HelloWorldData
+
+#Cria conexao com banco de dados
+teste = HelloWorldData()
+teste.conectar
 
 # Cria uma instância do Translator
 translator = Translator()
