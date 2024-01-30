@@ -1,100 +1,73 @@
 import tkinter as tk
 from tkinter import messagebox
-import sqlite3
-
-        
-        
-class SaudacaoDAO:
-    def __init__(self):
-        self.conn = sqlite3.connect("saudacoes.db")
-        self.criar_tabela()
-
-    def criar_tabela(self):
-        query = """CREATE TABLE IF NOT EXISTS saudacoes (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    idioma TEXT,
-                    mensagem TEXT
-                )"""
-      
-        self.conn.execute(query)
-        self.conn.commit()
-        
-        # Adicione as saudações para os idiomas desejados
-        
-        idiomas_saudacoes = [
-            ("Português", "Olá, Mundo!"),
-            ("Inglês", "Hello, World!"),
-            ("Espanhol", "¡Hola, Mundo!"),
-            ("Frances", "Bonjour le monde!"),
-            ("Alemão", "Hallo Welt!"),
-            ("Russo", "Привет, мир!"),
-            ("Chinês", "你好世界!"),
-            ("Finlandês", "Hei maailma!"),
-            ("Polonês", "Witaj świecie!"),
-            ("Hungaro", "Helló Világ!"),
-            # Adicione mais idiomas e saudações conforme necessário
-            ]
-                           
-        for idioma, saudacao in idiomas_saudacoes:
-                self.adicionar_saudacao(idioma, saudacao)
-  
-
-    def adicionar_saudacao(self, idioma, mensagem):
-        query = "INSERT INTO saudacoes (idioma, mensagem) VALUES (?, ?)"
-        self.conn.execute(query, (idioma, mensagem))
-        self.conn.commit()
-
-    def obter_saudacao(self, idioma):
-        query = "SELECT mensagem FROM saudacoes WHERE idioma = ?"
-        cursor = self.conn.execute(query, (idioma,))
-        resultado = cursor.fetchone()
-        return resultado[0] if resultado else None
+from googletrans import LANGUAGES
+from hello_world_popup_data import HelloWorldPopUpData
 
 class App:
-    def __init__(self, master):
+    def __init__(self, master, conexao_bd):
         self.master = master
         self.master.title("Saudações Multilíngues")
 
-        self.dao = SaudacaoDAO()
-    
-  
-
-        # Variável para armazenar a escolha do idioma
-        self.var_idioma = tk.StringVar(self.master)
-        self.var_idioma.set("Português")  # Idioma padrão
-        self.var_idioma.set("Inglês")
-        self.var_idioma.set("Espanhol")
-        self.var_idioma.set("Frances")
-        self.var_idioma.set("Alemão")
-        self.var_idioma.set("Russo")
-        self.var_idioma.set("Chinês")
-        self.var_idioma.set("Finlandês")
-        self.var_idioma.set("Polonês")
-        self.var_idioma.set("Hungaro")
-
-        # Menu suspenso para selecionar o idioma
-        
-        
-        self.menu_idioma = tk.OptionMenu(self.master, self.var_idioma, "Português", "Inglês", "Espanhol", "Frances", "Alemão", "Russo", "Chinês", "Finlandês", "Polonês", "Hungaro")
-        self.menu_idioma.pack(pady=10)
-            
-
-        # Botão para exibir a saudação
-        self.botao_saudacao = tk.Button(self.master, text="Mostrar Saudação", command=self.mostrar_saudacao)
-        self.botao_saudacao.pack(pady=20)
-        
-        
-
-
-    def mostrar_saudacao(self):
-        idioma_selecionado = self.var_idioma.get()
-        mensagem = self.dao.obter_saudacao(idioma_selecionado)
-        if mensagem:
-            messagebox.showinfo("Saudação", mensagem)
+        # Conecta ao banco de dados e verifica se a conexão foi bem-sucedida
+        self.teste = HelloWorldPopUpData(master)
+        if self.teste.conectar():
+            # Adiciona um botão para exibir saudações em diferentes idiomas
+            self.btn_mostrar_saudacoes = tk.Button(
+                master, text="Mostrar Saudações", command=self.mostrar_saudacoes)
+            self.btn_mostrar_saudacoes.pack(pady=20)
         else:
-            messagebox.showwarning("Aviso", "Saudação não encontrada para o idioma selecionado.")
+            print("Erro: Não foi possível conectar ao banco de dados.")
+
+    def mostrar_saudacoes(self):
+        # Obtém todas as saudações disponíveis no banco de dados
+        saudacoes_por_idioma = self.teste.obter_saudacoes_todas_linguagens()
+
+        # Exibe as saudações importadas em um pop-up
+        if saudacoes_por_idioma:
+            mensagem = ""
+            for idioma, saudacao in saudacoes_por_idioma.items():
+                nome_idioma = LANGUAGES.get(idioma, 'Idioma Desconhecido')
+                mensagem += f"{nome_idioma}: {saudacao}\n"
+
+            messagebox.showinfo("Saudações Importadas", mensagem)
+        else:
+            messagebox.showwarning("Aviso", "Não foi possível obter saudações importadas.")
 
 if __name__ == "__main__":
+    # Criação da instância de HelloWorldPopUpData
+    teste = HelloWorldPopUpData(None)
+
+    # Conectar ao banco de dados
+    if teste.conectar():
+        # Dados de exemplo (substitua pelos dados reais que você possui)
+        saudacoes_importadas = {
+            'fr': 'Bonjour le monde',
+            'es': 'Hola Mundo',
+            'pt': 'Olá, Mundo!',
+            'en': 'Hello, World!',
+            'de': 'Hallo Welt!',
+            'ru': 'Привет, мир!',
+            'cn': '你好世界!',
+            'fi': 'Hei maailma!',
+            'pl': 'Witaj świecie!',
+            'hu': 'Helló Világ!',
+            # Adicione mais saudações conforme necessário
+        }
+
+        # Importar saudações
+        teste.limpar_tabela_saudacoes()
+        teste.importar_saudacoes(saudacoes_importadas)
+
+        # Desconectar do banco de dados
+        teste.desconectar()
+    else:
+        print("Erro: Não foi possível conectar ao banco de dados.")
+
+    # Criar uma instância de Tkinter
     root = tk.Tk()
-    app = App(root)
+
+    # Passa a instância para a classe App
+    app = App(root, teste.conn)
+
+    # Executa o loop principal do tkinter
     root.mainloop()
