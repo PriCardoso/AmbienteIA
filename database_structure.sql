@@ -2,6 +2,12 @@ CREATE TABLE hello_world (lang VARCHAR(5), description VARCHAR(200) )
 
 INSERT INTO hello_world ( lang, description) VALUES ('','')
 
+CREATE TABLE IF NOT EXISTS saudacoes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    idioma TEXT,
+    mensagem TEXT
+    )
+
 -- Criação do usuário
 CREATE USER hello_world WITH
     LOGIN
@@ -26,5 +32,3 @@ CREATE DATABASE hello_world_db
 -- Dar permissoes
 
 GRANT ALL PRIVILEGES ON TABLE hello_world TO seu_usuario;
-
-SELECT * FROM hello_world;
