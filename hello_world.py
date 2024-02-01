@@ -1,11 +1,13 @@
-from googletrans import LANGUAGES
 from googletrans import Translator
 from hello_world_data import HelloWorldData
 from hello_world_dao import HelloWorldDB
 
 # Cria uma instância de HelloWorldData
 teste = HelloWorldData()
-teste.conectar
+teste.conectar()
+
+# Cria uma instância de HelloWorldDB
+db_instance = HelloWorldDB()
 
 # Cria uma instância do Translator
 translator = Translator()
@@ -15,7 +17,7 @@ phrase = "Olá Mundo"
 
 # Lista de idiomas para os quais queremos traduzir nossa frase.
 # Estes são os códigos de idioma para cada um dos idiomas.
-# Espanhol, Francês, Alemão, Russo, Chinês, Finlandes, polones e hungaro
+# Espanhol, Francês, Alemão, Russo e Chinês
 languages = ['es', 'fr', 'de', 'ru', 'zh-cn', 'fi', 'pl', 'hu']
 
 # Traduzindo a frase para cada idioma
