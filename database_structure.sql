@@ -26,3 +26,5 @@ CREATE DATABASE hello_world_db
 -- Dar permissoes
 
 GRANT ALL PRIVILEGES ON TABLE hello_world TO seu_usuario;
+
+SELECT * FROM hello_world;

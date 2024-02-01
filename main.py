@@ -14,3 +14,4 @@ db = HelloWorldDB()
 
 db.insert_data(lang='pt', description='Bom Dia')
 db.insert_data(lang='en', description='Good Morning')
+

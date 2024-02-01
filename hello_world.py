@@ -1,9 +1,13 @@
 from googletrans import Translator
 from hello_world_data import HelloWorldData
+from hello_world_dao import HelloWorldDB
 
-#Cria conexao com banco de dados
+# Cria uma instância de HelloWorldData
 teste = HelloWorldData()
-teste.conectar
+teste.conectar()
+
+# Cria uma instância de HelloWorldDB
+db_instance = HelloWorldDB()
 
 # Cria uma instância do Translator
 translator = Translator()
@@ -19,4 +23,8 @@ languages = ['es', 'fr', 'de', 'ru', 'zh-cn', 'fi', 'pl', 'hu']
 # Traduzindo a frase para cada idioma
 for lang in languages:
     translated_phrase = translator.translate(phrase, dest=lang)
+    db_instance.insert_data(lang, translated_phrase.text)
     print(f'{translated_phrase.origin} ({translated_phrase.src}) --> {translated_phrase.text} ({translated_phrase.dest})')
+
+# Fechar a conexão com o banco de dados
+teste.desconectar()
